@@ -1,0 +1,57 @@
+@startmindmap Fluxo de Navegação
+title Fluxo de Navegação
+
+*:<b>Home
+Landpage
+para divulgação
+do serviço
+;
+
+**:<b>Cadastro (Sign Up)
+Formulário de cadastro
+para novos usuários
+;
+
+**:<b>Login (Sign In)
+Formulário de login
+para usuários existentes
+;
+
+***:<b>Listar Organizações
+Lista das Organizações
+do usuário
+;
+
+****:<b>Incluir Organização
+Formulário para inclusão
+de novas organizações
+;
+
+****:<b>Vincular Usuário
+na Organização
+Formulário para vincular
+usuários a uma organização
+;
+
+***:<b>Lista de Notificações
+Página que exibe
+notificações de Processos
+do usuário e das Organizações
+a qual o usuário pertence
+;
+
+***:<b>Lista de Processos
+Página que exibe
+os processos
+cadastrados pelo usuário
+(Meus Processos) com
+a informação da última
+movimentação processual
+;
+
+****:<b>Incluir Processo
+Formulário para inclusão
+de novos processos
+;
+
+@endmindmap
