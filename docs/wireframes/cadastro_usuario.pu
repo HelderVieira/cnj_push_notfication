@@ -1,0 +1,26 @@
+@startsalt Cadastro de Usuário
+skinparam dpi 200
+
+{
+    {* <b>CNJ PushNotification | . . . | Tribunais interligados | Cadastre-se | Entre}
+
+    {+
+    .
+    <b>Cadastre-se | [ Já tem conta? Faça login ]
+    .
+    " Nome completo             "
+    " CPF                       "
+    " Endereço de e-mail        "
+    " Senha                     "
+    " Confirmar senha           "
+
+    [Cadastrar]
+
+    . 
+    ou entre com sua conta do Google
+    .
+    [Entrar com Google]
+    .
+    }
+}
+@endsalt

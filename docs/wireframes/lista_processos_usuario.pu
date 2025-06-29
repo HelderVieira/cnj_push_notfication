@@ -1,0 +1,24 @@
+@startsalt Lista de Processos do Usuário
+skinparam dpi 200
+
+{
+    {* <b>CNJ PushNotification | . . . | Meus Processos (42) | Notificações (5) | Meu Perfil | Minhas Organizações | Sair }
+
+    {/ <b>Meus Processos (42) | Organização A | Organização B | Organização C}
+    {
+    Processos vinculados ao meu CPF diretamente
+    [Acrescentar Processo]
+    .
+        {T#
+        +<b>Número do Processo | <b>Órgão Julgador | <b>Último Andamento | <b>Data do Último Andamento
+        +0000000-00.0000.0.00.0000 | Tribunal de Justiça | Andamento 1 | 01/01/2023
+        +0000000-00.0000.0.00.0000 | Tribunal Regional Federal | Andamento 2 | 02/01/2023
+        +0000000-00.0000.0.00.0000 | Tribunal Superior | Andamento 3 | 03/01/2023
+        +0000000-00.0000.0.00.0000 | Tribunal de Justiça | Andamento 4 | 04/01/2023
+        +0000000-00.0000.0.00.0000 | Tribunal Regional do Trabalho | Andamento 5 | 05/01/2023
+        +0000000-00.0000.0.00.0000 | Tribunal de Justiça Militar | Andamento 6 | 06/01/2023
+        }
+    .
+    }
+}
+@endsalt

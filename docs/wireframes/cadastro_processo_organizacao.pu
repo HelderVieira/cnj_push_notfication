@@ -1,0 +1,20 @@
+@startsalt Cadastro de Processo de Organização do Usuário
+skinparam dpi 200
+
+{
+    {* <b>CNJ PushNotification | . . . | Meus Processos (42) | Notificações (5) | Meu Perfil | Minhas Organizações | Sair }
+
+    {
+    . 
+    <b> Cadastro de Processo de Organização
+
+        {
+            Número do Processo      | "                          "
+            Vínculado               | ^                          ^^ao meu CPF, diretamente^Organição A^^Organição B^^Organição C^^
+        }
+        [Salvar]
+        .
+    .
+    }
+}
+@endsalt

@@ -1,0 +1,21 @@
+@startsalt Lista de Organizações do Usuário
+skinparam dpi 200
+
+{
+    {* <b>CNJ PushNotification | . . . | Meus Processos (42) | Notificações (5) | Meu Perfil | Minhas Organizações | Sair }
+
+    {
+    . 
+    <b> Minhas Organizações (3)
+    [Acrescentar Organização]
+    .
+        {#
+        <b>CNPJ            | <b>Nome da Organização | <b>Tipo de vínculo | <b>Ações 
+        00.000.000/0000-00 | Organização A          | Administrador      | [Editar]  
+        00.000.000/0000-00 | Organização B          | Visualizador       | {[Visualizar] | [Sair]}
+        00.000.000/0000-00 | Organização C          | Visualizador       | {[Visualizar] | [Sair]}
+        }
+    .
+    }
+}
+@endsalt

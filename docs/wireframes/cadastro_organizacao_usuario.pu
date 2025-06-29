@@ -1,0 +1,38 @@
+@startsalt Cadastro de Organização do Usuário
+skinparam dpi 200
+
+{
+    {* <b>CNJ PushNotification | . . . | Meus Processos (42) | Notificações (5) | Meu Perfil | Minhas Organizações | Sair }
+
+    {
+    . 
+    <b> Cadasrto de Organização
+
+        {
+            Nome da Organização | "                          "
+            CNPJ                | "                          "
+            Endereço físico     | "                          "
+            Cidade              | "                          "
+        }
+        .
+        <b>Processos vinculados a esta organização
+        [Acrescentar Processo]
+        {#
+        <b>Número do Processo | <b>Órgão Julgador | <b>Ações   
+        0000000-00.0000.0.00.0000 | Tribunal de Justiça | {[Visualizar] | [Excluir]}
+        0000000-00.0000.0.00.0000 | Tribunal Regional Federal| {[Visualizar] | [Excluir]}
+        0000000-00.0000.0.00.0000 | Tribunal Superior| {[Visualizar] | [Excluir]}
+        0000000-00.0000.0.00.0000 | Tribunal de Justiça| {[Visualizar] | [Excluir]}
+        }
+        .
+        <b>Usuários vinculados a esta organização
+        [Acrescentar Usuário]
+        {#
+        <B>CPF | <b>Nome do Usuário | <b>Tipo de vínculo | <b>Ações
+        000.000.000-00 |  Usuário A (eu)      | Administrador     | .
+        000.000.000-01 |  Usuário B           | Visualizador      | [Excluir]
+        }
+    .
+    }
+}
+@endsalt
