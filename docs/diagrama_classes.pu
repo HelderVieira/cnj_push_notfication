@@ -1,0 +1,131 @@
+@startuml CNJ Push Notification
+' title CNJ Push Notification
+
+
+class Empresa {
+  - _id: ObjectId
+  - cnpj: String [14]
+  - nome: String
+  - endereco: Endereco
+}
+
+class Endereco {
+  - logradouro: String
+  - numero: String
+  - complemento: String
+  - bairro: String
+  - cidade: String
+  - estado: String
+  - cep: String
+}
+
+class ProcessoMonitorado {
+  - _id: ObjectId
+  - empresaId: ObjectId
+  - numeroProcesso: String [20]
+  - orgaoJulgador: OrgaoJulgador
+  - situacao: String
+  - dataCadastro: DateTime
+}
+
+class OrgaoJulgador {
+  - nome: String
+  - codigo: Integer
+  - municipioIBGE: Integer
+}
+
+class DadosAPI {
+  - _id: ObjectId
+  - numeroProcesso: String
+  - tribunal: String
+  - dataAjuizamento: DateTime
+  - grau: String
+  - nivelSigilo: Integer
+  - formato: Formato
+  - sistema: Sistema
+  - classe: Classe
+  - assuntos: List<Assunto>
+  - orgaoJulgador: OrgaoJulgadorAPI
+  - movimentos: List<Movimento>
+  - dataHoraUltimaAtualizacao: DateTime
+  - @timestamp: DateTime
+}
+
+class Formato {
+  - codigo: Integer
+  - nome: String
+}
+
+class Sistema {
+  - codigo: Integer
+  - nome: String
+}
+
+class Classe {
+  - codigo: Integer
+  - nome: String
+}
+
+class Assunto {
+  - codigo: Integer
+  - nome: String
+}
+
+class OrgaoJulgadorAPI {
+  - codigo: Integer
+  - nome: String
+  - codigoMunicipioIBGE: Integer
+}
+
+class Movimento {
+  - codigo: Integer
+  - nome: String
+  - dataHora: DateTime
+  - orgaoJulgador: OrgaoMovimento
+  - complementosTabelados: List<ComplementoTabelado>
+}
+
+class OrgaoMovimento {
+  - codigoOrgao: Integer
+  - nomeOrgao: String
+}
+
+class ComplementoTabelado {
+  - codigo: Integer
+  - descricao: String
+  - valor: Integer
+  - nome: String
+}
+
+class Notificacao {
+  - _id: ObjectId
+  - processoMonitoradoId: ObjectId
+  - empresaId: ObjectId
+  - tipo: String
+  - descricao: String
+  - dataMovimentacao: DateTime
+  - dataNotificacao: DateTime
+  - status: String
+}
+
+' Relacionamentos
+
+Empresa "1" *-- "1" Endereco : composto por
+Empresa "1" o-- "*" ProcessoMonitorado : monitora
+
+ProcessoMonitorado "1" *-- "1" OrgaoJulgador : composto por
+ProcessoMonitorado "1" o-- "1" DadosAPI : possui
+ProcessoMonitorado "1" o-- "*" Notificacao : gera
+
+DadosAPI "1" *-- "*" Movimento : possui
+DadosAPI "1" *-- "1" OrgaoJulgadorAPI : julgado por
+Movimento "1" *-- "*" ComplementoTabelado : complementado por
+Movimento "1" *-- "1" OrgaoMovimento : realizado por
+
+DadosAPI "1" *-- "1" Formato : no formato
+DadosAPI "1" *-- "1" Sistema : usa sistema
+DadosAPI "1" *-- "1" Classe : classificado como
+DadosAPI "1" *-- "*" Assunto : trata de
+
+@enduml
+

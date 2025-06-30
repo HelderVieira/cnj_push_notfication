@@ -34,5 +34,7 @@ skinparam dpi 200
         }
     .
     }
+    .
+    {[Salvar Organização] | [Cancelar]}
 }
 @endsalt
