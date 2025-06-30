@@ -1,0 +1,32 @@
+@startsalt Detalhes do Processo do Usuário
+skinparam dpi 200
+
+{
+    {* <b>CNJ PushNotification | . . . | Meus Processos (42) | Notificações (5) | Meu Perfil | Minhas Organizações | Sair }
+
+    {
+    . 
+    <b> Detalhes do Processo do Usuário
+    .
+
+        {
+            Número do Processo:  | 000.000.000-00.0000.0.00.0000
+            Vínculado a:         | Organização A (CNPJ: 00.000.000/0001-00)
+            Órgão Julgador:      | Tribunal de Justiça do Estado A
+            Situação:            | Em Andamento
+            Data Cadastro:       | 01/01/2023
+        }
+        .
+        <b> Movimentações Recentes
+        {#
+            <b> Data   |<b>Hora | <b>Movimentação     | <b>Órgão Julgador
+            01/01/2023 | 08:13  | Ação Inicial        | Tribunal de Justiça do Estado A
+            02/01/2023 | 10:23  | Despacho            | Tribunal de Justiça do Estado A
+            03/01/2023 | 14:45  | Audiência Designada | Tribunal de Justiça do Estado A
+        }
+        .
+        [Voltar]
+        .
+    }
+}
+@endsalt
