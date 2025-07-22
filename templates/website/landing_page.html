@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Página Inicial{% endblock %}
+{% block content %}
+<div class="text-center">
+  <h1>{{ conteudo.titulo_principal }}</h1>
+  <h3>{{ conteudo.subtitulo }}</h3>
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <p>{{ conteudo.descricao_servico_1 }}</p>
+        </div>
+      </div>
+    </div>
+    {% if conteudo.descricao_servico_2 %}
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <p>{{ conteudo.descricao_servico_2 }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% if conteudo.descricao_servico_3 %}
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <p>{{ conteudo.descricao_servico_3 }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% if conteudo.cta_texto %}
+  <a href="/signup/" class="btn btn-primary btn-lg mt-3">{{ conteudo.cta_texto }}</a>
+  {% endif %}
+</div>
+{% endblock %}

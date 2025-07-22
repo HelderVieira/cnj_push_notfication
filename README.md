@@ -1,4 +1,4 @@
-# CNJ PushNotfication
+# CNJ PushNotification
 
 Projeto construído na disciplina de Banco de Dados, dentro do curso de Mestrado Profissional em Tecnologia da Informação, do IFPB.
 
