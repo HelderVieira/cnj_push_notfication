@@ -1,15 +1,11 @@
 @startuml CNJ Push Notification
 ' title CNJ Push Notification
 
-
-class Empresa {
+class Organizacao {
   - _id: ObjectId
   - cnpj: String [14]
   - nome: String
-  - endereco: Endereco
-}
 
-class Endereco {
   - logradouro: String
   - numero: String
   - complemento: String
@@ -18,6 +14,23 @@ class Endereco {
   - estado: String
   - cep: String
 }
+
+class Vinculo {
+  - _id: ObjectId
+  - organizacaoId: ObjectId
+  - usuarioId: ObjectId
+  - tipo: String
+}
+
+class Usuario {
+  - _id: ObjectId
+  - cpf: String [11]
+  - nome: String
+  - email: String
+}
+
+Usuario "1" o-- "*" Vinculo : possui
+Vinculo "*" o-- "1" Organizacao : vinculado a
 
 class ProcessoMonitorado {
   - _id: ObjectId
@@ -110,8 +123,7 @@ class Notificacao {
 
 ' Relacionamentos
 
-Empresa "1" *-- "1" Endereco : composto por
-Empresa "1" o-- "*" ProcessoMonitorado : monitora
+Organizacao "1" o-- "*" ProcessoMonitorado : monitora
 
 ProcessoMonitorado "1" *-- "1" OrgaoJulgador : composto por
 ProcessoMonitorado "1" o-- "1" DadosAPI : possui
