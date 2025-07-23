@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import ConteudoLandingPage, CustomUser
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm
 from django.views.decorators.csrf import csrf_protect
 
 
@@ -50,3 +50,78 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     return render(request, 'website/dashboard.html')
+
+@login_required
+def lista_organizacoes_view(request):
+    vinculos = Vinculo.objects.filter(usuario=request.user)
+    return render(request, 'organizacoes/lista_organizacoes_usuario.html', {
+        'vinculos': vinculos,
+    })
+
+@login_required
+def cadastro_organizacao_view(request, pk=None):
+    if pk:
+        org = Organizacao.objects.get(pk=pk)
+        vinculo = Vinculo.objects.filter(organizacao=org, usuario=request.user).first()
+        is_admin = vinculo and vinculo.tipo == Vinculo.TipoVinculo.ADMINISTRADOR
+        if not vinculo:
+            messages.error(request, 'Você não tem permissão para acessar esta organização.')
+            return redirect('lista_organizacoes')
+    else:
+        org = None
+        is_admin = True  # Criador será admin
+
+    # CRUD de vínculos (apenas admin)
+    if request.method == 'POST' and 'vinculo_submit' in request.POST and is_admin:
+        vinculo_form = VinculoForm(request.POST)
+        if vinculo_form.is_valid():
+            try:
+                Vinculo.objects.create(
+                    organizacao=org,
+                    usuario=vinculo_form.cleaned_data['usuario'],
+                    tipo=vinculo_form.cleaned_data['tipo']
+                )
+                messages.success(request, 'Usuário vinculado com sucesso!')
+            except Exception as e:
+                messages.error(request, f'Erro ao vincular usuário: {e}')
+        else:
+            messages.error(request, 'Erro ao vincular usuário.')
+        return redirect('editar_organizacao', pk=org.pk)
+
+    if request.method == 'POST' and 'remover_vinculo' in request.POST and is_admin:
+        vinculo_id = request.POST.get('remover_vinculo')
+        try:
+            vinculo_remover = Vinculo.objects.get(pk=vinculo_id, organizacao=org)
+            if vinculo_remover.usuario != request.user:
+                vinculo_remover.delete()
+                messages.success(request, 'Vínculo removido com sucesso!')
+            else:
+                messages.error(request, 'Você não pode remover seu próprio vínculo de administrador.')
+        except Exception as e:
+            messages.error(request, f'Erro ao remover vínculo: {e}')
+        return redirect('editar_organizacao', pk=org.pk)
+
+    if request.method == 'POST' and 'org_submit' in request.POST:
+        if not is_admin:
+            messages.error(request, 'Você não tem permissão para editar esta organização.')
+            return redirect('editar_organizacao', pk=org.pk)
+        form = OrganizationForm(request.POST, instance=org)
+        if form.is_valid():
+            organizacao = form.save()
+            if not pk:
+                Vinculo.objects.create(organizacao=organizacao, usuario=request.user, tipo=Vinculo.TipoVinculo.ADMINISTRADOR)
+            messages.success(request, 'Organização salva com sucesso!')
+            return redirect('lista_organizacoes')
+    else:
+        form = OrganizationForm(instance=org)
+
+    vinculo_form = VinculoForm()
+    vinculos = Vinculo.objects.filter(organizacao=org) if org else []
+
+    return render(request, 'organizacoes/cadastro_organizacao_usuario.html', {
+        'form': form,
+        'organizacao': org,
+        'is_admin': is_admin,
+        'vinculo_form': vinculo_form,
+        'vinculos': vinculos,
+    })

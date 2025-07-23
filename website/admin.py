@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, ConteudoLandingPage
+from .models import CustomUser, ConteudoLandingPage, Organizacao, Vinculo
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -25,3 +25,19 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(ConteudoLandingPage)
 class ConteudoLandingPageAdmin(admin.ModelAdmin):
     list_display = ('titulo_principal', 'subtitulo')
+
+class VinculoInline(admin.TabularInline):
+    model = Vinculo
+    extra = 1
+
+@admin.register(Organizacao)
+class OrganizacaoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'cnpj', 'cidade', 'estado')
+    search_fields = ('nome', 'cnpj')
+    inlines = [VinculoInline]
+
+@admin.register(Vinculo)
+class VinculoAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'organizacao', 'tipo')
+    list_filter = ('tipo', 'organizacao')
+    search_fields = ('usuario__nome', 'usuario__cpf', 'organizacao__nome', 'organizacao__cnpj')

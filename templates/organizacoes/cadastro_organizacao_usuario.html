@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Cadastro de Organização{% endblock %}
+{% block content %}
+<div class="container" v-scope>
+    <h2 class="mb-4">Cadastro de Organização</h2>
+    <form method="post" hx-post="" hx-target="#org-form-content" hx-swap="outerHTML">
+        {% csrf_token %}
+        <div id="org-form-content">
+            {{ form.non_field_errors }}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_nome" class="form-label">Nome da Organização</label>
+                    {% if is_admin %}
+                        {{ form.nome }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.nome.value }}" disabled>
+                    {% endif %}
+                    {{ form.nome.errors }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_cnpj" class="form-label">CNPJ</label>
+                    {% if is_admin %}
+                        {{ form.cnpj }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.cnpj.value }}" disabled>
+                    {% endif %}
+                    {{ form.cnpj.errors }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_logradouro" class="form-label">Logradouro</label>
+                    {% if is_admin %}
+                        {{ form.logradouro }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.logradouro.value }}" disabled>
+                    {% endif %}
+                    {{ form.logradouro.errors }}
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="id_numero" class="form-label">Número</label>
+                    {% if is_admin %}
+                        {{ form.numero }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.numero.value }}" disabled>
+                    {% endif %}
+                    {{ form.numero.errors }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_complemento" class="form-label">Complemento</label>
+                    {% if is_admin %}
+                        {{ form.complemento }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.complemento.value }}" disabled>
+                    {% endif %}
+                    {{ form.complemento.errors }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="id_bairro" class="form-label">Bairro</label>
+                    {% if is_admin %}
+                        {{ form.bairro }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.bairro.value }}" disabled>
+                    {% endif %}
+                    {{ form.bairro.errors }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_cidade" class="form-label">Cidade</label>
+                    {% if is_admin %}
+                        {{ form.cidade }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.cidade.value }}" disabled>
+                    {% endif %}
+                    {{ form.cidade.errors }}
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="id_estado" class="form-label">Estado</label>
+                    {% if is_admin %}
+                        {{ form.estado }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.estado.value }}" disabled>
+                    {% endif %}
+                    {{ form.estado.errors }}
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="id_cep" class="form-label">CEP</label>
+                    {% if is_admin %}
+                        {{ form.cep }}
+                    {% else %}
+                        <input type="text" class="form-control" value="{{ form.cep.value }}" disabled>
+                    {% endif %}
+                    {{ form.cep.errors }}
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            {% if is_admin %}
+                <button type="submit" name="org_submit" class="btn btn-success">Salvar Organização</button>
+            {% endif %}
+            <a href="{% url 'lista_organizacoes' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    {% if organizacao %}
+    <hr class="my-4">
+    <h3 class="mb-3">Usuários Vinculados</h3>
+    {% if is_admin %}
+    <form method="post" class="row g-2 align-items-end mb-3">
+        {% csrf_token %}
+        <div class="col-auto">
+            {{ vinculo_form.cpf.label_tag }}
+            {{ vinculo_form.cpf }}
+        </div>
+        <div class="col-auto">
+            {{ vinculo_form.tipo.label_tag }}
+            {{ vinculo_form.tipo }}
+        </div>
+        <div class="col-auto">
+            <button type="submit" name="vinculo_submit" class="btn btn-primary">Vincular Usuário</button>
+        </div>
+        {% if vinculo_form.non_field_errors %}
+        <div class="col-12">
+            <div class="alert alert-danger">{{ vinculo_form.non_field_errors }}</div>
+        </div>
+        {% endif %}
+    </form>
+    {% endif %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>E-mail</th>
+                <th>Tipo de Vínculo</th>
+                {% if is_admin %}<th>Ações</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in vinculos %}
+            <tr>
+                <td>{{ v.usuario.nome }}</td>
+                <td>{{ v.usuario.cpf }}</td>
+                <td>{{ v.usuario.email }}</td>
+                <td>{{ v.get_tipo_display }}</td>
+                {% if is_admin %}
+                <td>
+                    {% if v.usuario != user %}
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" name="remover_vinculo" value="{{ v.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Remover vínculo deste usuário?');">Remover</button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">(você)</span>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center">Nenhum usuário vinculado.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+<script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js" defer init="[[' ]]" delimiters="[[' ']]"></script>
+{% endblock %}

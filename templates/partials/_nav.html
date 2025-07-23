@@ -11,6 +11,9 @@
             <a class="nav-link" href="/dashboard/">Dashboard</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'lista_organizacoes' %}">Minhas Organizações</a>
+          </li>
+          <li class="nav-item">
             <form method="post" action="/logout/" style="display:inline;">
               {% csrf_token %}
               <button class="btn btn-link nav-link" type="submit">Sair</button>

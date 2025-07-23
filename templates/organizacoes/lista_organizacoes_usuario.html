@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Minhas Organizações{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Minhas Organizações</h2>
+    <div class="mb-3 text-end">
+        <a href="{% url 'cadastro_organizacao' %}" class="btn btn-primary">Acrescentar Organização</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>CNPJ</th>
+                <th>Nome da Organização</th>
+                <th>Tipo de Vínculo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vinculo in vinculos %}
+            <tr>
+                <td>{{ vinculo.organizacao.cnpj }}</td>
+                <td>{{ vinculo.organizacao.nome }}</td>
+                <td>{{ vinculo.get_tipo_display }}</td>
+                <td>
+                    {% if vinculo.tipo == 'ADMIN' %}
+                        <a href="{% url 'editar_organizacao' vinculo.organizacao.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    {% else %}
+                        <a href="{% url 'editar_organizacao' vinculo.organizacao.id %}" class="btn btn-sm btn-info">Visualizar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Nenhuma organização cadastrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
