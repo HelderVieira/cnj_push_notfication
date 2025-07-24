@@ -33,8 +33,7 @@
                         <tr>
                             <th>Número do Processo</th>
                             <th>Órgão Julgador</th>
-                            <th>Última Movimentação</th>
-                            <th>Data Última Movimentação</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,11 +41,12 @@
                         <tr>
                             <td>{{ processo.numero_processo }}</td>
                             <td>{{ processo.orgao_julgador }}</td>
-                            <td>{{ processo.ultima_movimentacao }}</td>
-                            <td>{{ processo.data_ultima_movimentacao|date:'d/m/Y' }}</td>
+                            <td>
+                                <a href="{% url 'excluir_processo_monitorado' processo.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                            </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" class="text-center">Nenhum processo encontrado.</td></tr>
+                        <tr><td colspan="5" class="text-center">Nenhum processo encontrado.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -60,8 +60,7 @@
                         <tr>
                             <th>Número do Processo</th>
                             <th>Órgão Julgador</th>
-                            <th>Última Movimentação</th>
-                            <th>Data Última Movimentação</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,11 +68,12 @@
                         <tr>
                             <td>{{ processo.numero_processo }}</td>
                             <td>{{ processo.orgao_julgador }}</td>
-                            <td>{{ processo.ultima_movimentacao }}</td>
-                            <td>{{ processo.data_ultima_movimentacao|date:'d/m/Y' }}</td>
+                            <td>
+                                <a href="{% url 'excluir_processo_monitorado_org' processo.id org.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                            </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" class="text-center">Nenhum processo encontrado para esta organização.</td></tr>
+                        <tr><td colspan="5" class="text-center">Nenhum processo encontrado para esta organização.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>

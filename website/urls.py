@@ -11,6 +11,8 @@ urlpatterns = [
     # Meus Processos
     path('meus-processos/', views.meus_processos_view, name='meus_processos'),
     path('meus-processos/adicionar/', views.adicionar_processo_view, name='adicionar_processo'),
+    path('meus-processos/<int:processo_id>/excluir/', views.excluir_processo_monitorado_view, name='excluir_processo_monitorado'),
+    path('meus-processos/<int:processo_id>/excluir/org/<int:org_id>/', views.excluir_processo_monitorado_view, name='excluir_processo_monitorado_org'),
 
     # Organização
     path('organizacoes/', views.lista_organizacoes_view, name='lista_organizacoes'),

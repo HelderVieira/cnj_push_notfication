@@ -125,6 +125,40 @@ def lista_organizacoes_view(request):
     })
 
 @login_required
+def excluir_processo_monitorado_view(request, processo_id, org_id=None):
+    """
+    Remove um processo da lista de monitorados do usuário e, se org_id for informado e o usuário for admin,
+    também remove da organização.
+    """
+    from django.http import HttpResponseForbidden
+    user = request.user
+    try:
+        processo = ProcessoMonitorados.objects.get(id=processo_id)
+    except ProcessoMonitorados.DoesNotExist:
+        messages.error(request, 'Processo não encontrado.')
+        return redirect('meus_processos')
+
+    if org_id:
+        # Tentativa de remover da organização
+        try:
+            org = Organizacao.objects.get(id=org_id)
+        except Organizacao.DoesNotExist:
+            messages.error(request, 'Organização não encontrada.')
+            return redirect('meus_processos')
+        # Verifica se usuário é admin
+        vinculo_admin = Vinculo.objects.filter(usuario=user, organizacao=org, tipo=Vinculo.TipoVinculo.ADMINISTRADOR).exists()
+        if not vinculo_admin:
+            return HttpResponseForbidden('Você não tem permissão para remover processos desta organização.')
+        org.processos_monitorados.remove(processo)
+        messages.success(request, 'Processo removido da organização com sucesso!')
+    else:
+        # Remover do CPF do usuário
+        user.processos_monitorados.remove(processo)
+        messages.success(request, 'Processo removido da sua lista com sucesso!')
+
+    return redirect('meus_processos')
+
+@login_required
 def cadastro_organizacao_view(request, pk=None):
     if pk:
         org = Organizacao.objects.get(pk=pk)
