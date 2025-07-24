@@ -86,7 +86,7 @@ class Vinculo(models.Model):
         return f"{self.usuario.nome} - {self.organizacao.nome} ({self.get_tipo_display()})"
 
 class ProcessoMonitorados(models.Model):
-    numero_processo = models.CharField('Número do Processo', max_length=25)
+    numero_processo = models.CharField('Número do Processo', max_length=50)
     orgao_julgador = models.CharField('Órgão Julgador', max_length=255, null=True, blank=True)
     ultima_movimentacao = models.CharField('Última Movimentação Processual', max_length=255, null=True, blank=True)
     data_ultima_movimentacao = models.DateField('Data Última Movimentação', null=True, blank=True)

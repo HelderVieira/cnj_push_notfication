@@ -4,13 +4,18 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="mb-4">Cadastro de Processo de Organização</h2>
+    <h2 class="mb-4">Adicionar Processo</h2>
     <form method="post" novalidate>
         {% csrf_token %}
         <div class="mb-3">
             <label for="id_numero_processo" class="form-label">Número do Processo</label>
             {{ form.numero_processo }}
             {% if form.numero_processo.errors %}<div class="text-danger small">{{ form.numero_processo.errors }}</div>{% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_orgao_julgador" class="form-label">Órgão Julgador</label>
+            {{ form.orgao_julgador }}
+            {% if form.orgao_julgador.errors %}<div class="text-danger small">{{ form.orgao_julgador.errors }}</div>{% endif %}
         </div>
         <div class="mb-3">
             <label for="id_vinculado" class="form-label">Vinculado</label>

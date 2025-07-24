@@ -57,9 +57,64 @@ class ProcessoMonitoradosForm(forms.ModelForm):
     VINCULO_CHOICES = []  # Preenchido dinamicamente na view
     vinculado = forms.ChoiceField(choices=[], label='Vinculado', required=True, widget=forms.Select(attrs={'class': 'form-select'}))
 
+    ORGAO_JULGADOR_CHOICES = [
+        # Tribunais Superiores
+        ("STF", "SUPREMO TRIBUNAL FEDERAL"),
+        ("STJ", "SUPERIOR TRIBUNAL DE JUSTIÇA"),
+        ("TST", "TRIBUNAL SUPERIOR DO TRABALHO"),
+        ("TSE", "TRIBUNAL SUPERIOR ELEITORAL"),
+        ("STM", "SUPERIOR TRIBUNAL MILITAR"),
+        # Tribunais Regionais Federais
+        ("TRF1", "TRIBUNAL REGIONAL FEDERAL DA 1ª REGIÃO"),
+        ("TRF2", "TRIBUNAL REGIONAL FEDERAL DA 2ª REGIÃO"),
+        ("TRF3", "TRIBUNAL REGIONAL FEDERAL DA 3ª REGIÃO"),
+        ("TRF4", "TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO"),
+        ("TRF5", "TRIBUNAL REGIONAL FEDERAL DA 5ª REGIÃO"),
+        ("TRF6", "TRIBUNAL REGIONAL FEDERAL DA 6ª REGIÃO"),
+        # Tribunais de Justiça Estaduais
+        ("TJAC", "TRIBUNAL DE JUSTIÇA DO ESTADO DO ACRE"),
+        ("TJAL", "TRIBUNAL DE JUSTIÇA DO ESTADO DE ALAGOAS"),
+        ("TJAP", "TRIBUNAL DE JUSTIÇA DO ESTADO DO AMAPÁ"),
+        ("TJAM", "TRIBUNAL DE JUSTIÇA DO ESTADO DO AMAZONAS"),
+        ("TJBA", "TRIBUNAL DE JUSTIÇA DO ESTADO DA BAHIA"),
+        ("TJCE", "TRIBUNAL DE JUSTIÇA DO ESTADO DO CEARÁ"),
+        ("TJDFT", "TRIBUNAL DE JUSTIÇA DO DISTRITO FEDERAL E DOS TERRITÓRIOS"),
+        ("TJES", "TRIBUNAL DE JUSTIÇA DO ESTADO DO ESPÍRITO SANTO"),
+        ("TJGO", "TRIBUNAL DE JUSTIÇA DO ESTADO DE GOIÁS"),
+        ("TJMA", "TRIBUNAL DE JUSTIÇA DO ESTADO DO MARANHÃO"),
+        ("TJMT", "TRIBUNAL DE JUSTIÇA DO ESTADO DE MATO GROSSO"),
+        ("TJMS", "TRIBUNAL DE JUSTIÇA DO ESTADO DE MATO GROSSO DO SUL"),
+        ("TJMG", "TRIBUNAL DE JUSTIÇA DO ESTADO DE MINAS GERAIS"),
+        ("TJPA", "TRIBUNAL DE JUSTIÇA DO ESTADO DO PARÁ"),
+        ("TJPB", "TRIBUNAL DE JUSTIÇA DO ESTADO DA PARAÍBA"),
+        ("TJPR", "TRIBUNAL DE JUSTIÇA DO ESTADO DO PARANÁ"),
+        ("TJPE", "TRIBUNAL DE JUSTIÇA DO ESTADO DE PERNAMBUCO"),
+        ("TJPI", "TRIBUNAL DE JUSTIÇA DO ESTADO DO PIAUÍ"),
+        ("TJRJ", "TRIBUNAL DE JUSTIÇA DO ESTADO DO RIO DE JANEIRO"),
+        ("TJRN", "TRIBUNAL DE JUSTIÇA DO ESTADO DO RIO GRANDE DO NORTE"),
+        ("TJRS", "TRIBUNAL DE JUSTIÇA DO ESTADO DO RIO GRANDE DO SUL"),
+        ("TJRO", "TRIBUNAL DE JUSTIÇA DO ESTADO DE RONDÔNIA"),
+        ("TJRR", "TRIBUNAL DE JUSTIÇA DO ESTADO DE RORAIMA"),
+        ("TJSC", "TRIBUNAL DE JUSTIÇA DO ESTADO DE SANTA CATARINA"),
+        ("TJSP", "TRIBUNAL DE JUSTIÇA DO ESTADO DE SÃO PAULO"),
+        ("TJSE", "TRIBUNAL DE JUSTIÇA DO ESTADO DE SERGIPE"),
+        ("TJTO", "TRIBUNAL DE JUSTIÇA DO ESTADO DO TOCANTINS"),
+        # Tribunais de Justiça Militar Estaduais
+        ("TJMMG", "TRIBUNAL DE JUSTIÇA MILITAR DO ESTADO DE MINAS GERAIS"),
+        ("TJMRS", "TRIBUNAL DE JUSTIÇA MILITAR DO ESTADO DO RIO GRANDE DO SUL"),
+        ("TJMSP", "TRIBUNAL DE JUSTIÇA MILITAR DO ESTADO DE SÃO PAULO")
+    ]
+    orgao_julgador = forms.ChoiceField(
+        choices=ORGAO_JULGADOR_CHOICES,
+        initial='TJPB',
+        label='Órgão Julgador',
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
     class Meta:
         model = ProcessoMonitorados
-        fields = ['numero_processo']
+        fields = ['numero_processo', 'orgao_julgador']
         widgets = {
             'numero_processo': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -68,6 +123,9 @@ class ProcessoMonitoradosForm(forms.ModelForm):
         vinculo_choices = kwargs.pop('vinculo_choices', [])
         super().__init__(*args, **kwargs)
         self.fields['vinculado'].choices = vinculo_choices
+        self.fields['numero_processo'].widget.attrs.update(
+            {'autofocus': True}
+        )
 
 class OrganizationForm(forms.ModelForm):
     class Meta:
