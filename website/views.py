@@ -2,9 +2,35 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo
+from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo, ProcessoMonitorados
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm
 from django.views.decorators.csrf import csrf_protect
+
+from django import template
+register = template.Library()
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+@login_required
+def meus_processos_view(request):
+    user = request.user
+    # Todos os processos vinculados ao CPF do usuário
+    processos_cpf = ProcessoMonitorados.objects.filter(cpf_relacionado=user.cpf)
+    # Organizações que o usuário tem vínculo
+    vinculos = Vinculo.objects.filter(usuario=user).select_related('organizacao')
+    organizacoes = [v.organizacao for v in vinculos]
+    # Dicionário: org_id -> queryset de processos daquela organização
+    processos_por_org = {}
+    for org in organizacoes:
+        processos_por_org[org.id] = ProcessoMonitorados.objects.filter(organizacao=org)
+    context = {
+        'processos_cpf': processos_cpf,
+        'organizacoes': organizacoes,
+        'processos_por_org': processos_por_org,
+    }
+    return render(request, 'website/meus_processos.html', context)
 
 
 def landing_page_view(request):

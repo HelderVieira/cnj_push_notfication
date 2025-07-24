@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Meus Processos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Meus Processos</h2>
+    <ul class="nav nav-tabs" id="processosTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="todos-tab" data-bs-toggle="tab" data-bs-target="#todos" type="button" role="tab" aria-controls="todos" aria-selected="true">
+                Todos vinculados ao meu CPF
+            </button>
+        </li>
+        {% for org in organizacoes %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="org-{{ org.id }}-tab" data-bs-toggle="tab" data-bs-target="#org-{{ org.id }}" type="button" role="tab" aria-controls="org-{{ org.id }}" aria-selected="false">
+                {{ org.nome }}
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content mt-3" id="processosTabsContent">
+        <div class="tab-pane fade show active" id="todos" role="tabpanel" aria-labelledby="todos-tab">
+            <!-- <div class="d-flex justify-content-end mb-2">
+                <a href="#" class="btn btn-primary">Acrescentar Processo</a>
+            </div> -->
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Número do Processo</th>
+                            <th>Órgão Julgador</th>
+                            <th>Última Movimentação</th>
+                            <th>Data Última Movimentação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for processo in processos_cpf %}
+                        <tr>
+                            <td>{{ processo.numero_processo }}</td>
+                            <td>{{ processo.orgao_julgador }}</td>
+                            <td>{{ processo.ultima_movimentacao }}</td>
+                            <td>{{ processo.data_ultima_movimentacao|date:'d/m/Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center">Nenhum processo encontrado.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% for org in organizacoes %}
+        <div class="tab-pane fade" id="org-{{ org.id }}" role="tabpanel" aria-labelledby="org-{{ org.id }}-tab">
+            <div class="table-responsive mt-2">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Número do Processo</th>
+                            <th>Órgão Julgador</th>
+                            <th>Última Movimentação</th>
+                            <th>Data Última Movimentação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for processo in processos_por_org %}
+                        <tr>
+                            <td>{{ processo.numero_processo }}</td>
+                            <td>{{ processo.orgao_julgador }}</td>
+                            <td>{{ processo.ultima_movimentacao }}</td>
+                            <td>{{ processo.data_ultima_movimentacao|date:'d/m/Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center">Nenhum processo encontrado para esta organização.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Corrige tab ativa ao recarregar
+    const triggerTabList = [].slice.call(document.querySelectorAll('#processosTabs button'));
+    triggerTabList.forEach(function (triggerEl) {
+        triggerEl.addEventListener('click', function (event) {
+            localStorage.setItem('meus_processos_active_tab', event.target.id);
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const activeTab = localStorage.getItem('meus_processos_active_tab');
+        if (activeTab) {
+            const tabTrigger = document.getElementById(activeTab);
+            if (tabTrigger) {
+                new bootstrap.Tab(tabTrigger).show();
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% comment %}
+Filtro customizado get_item deve ser registrado para acessar dict por chave no template:
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+{% endcomment %}

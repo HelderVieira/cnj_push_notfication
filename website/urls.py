@@ -8,6 +8,9 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
 
+    # Meus Processos
+    path('meus-processos/', views.meus_processos_view, name='meus_processos'),
+
     # Organização
     path('organizacoes/', views.lista_organizacoes_view, name='lista_organizacoes'),
     path('organizacoes/nova/', views.cadastro_organizacao_view, name='cadastro_organizacao'),
