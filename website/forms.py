@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate, get_user_model, password_validation
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import CustomUser, Organizacao, Vinculo
+from .models import CustomUser, Organizacao, Vinculo, ProcessoMonitorados
 from django.core.validators import RegexValidator
 
 class CustomUserCreationForm(UserCreationForm):
@@ -52,6 +52,22 @@ class VinculoForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+class ProcessoMonitoradosForm(forms.ModelForm):
+    VINCULO_CHOICES = []  # Preenchido dinamicamente na view
+    vinculado = forms.ChoiceField(choices=[], label='Vinculado', required=True, widget=forms.Select(attrs={'class': 'form-select'}))
+
+    class Meta:
+        model = ProcessoMonitorados
+        fields = ['numero_processo']
+        widgets = {
+            'numero_processo': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        vinculo_choices = kwargs.pop('vinculo_choices', [])
+        super().__init__(*args, **kwargs)
+        self.fields['vinculado'].choices = vinculo_choices
 
 class OrganizationForm(forms.ModelForm):
     class Meta:

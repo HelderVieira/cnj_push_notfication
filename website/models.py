@@ -87,11 +87,9 @@ class Vinculo(models.Model):
 
 class ProcessoMonitorados(models.Model):
     numero_processo = models.CharField('Número do Processo', max_length=25)
-    orgao_julgador = models.CharField('Órgão Julgador', max_length=255)
-    ultima_movimentacao = models.CharField('Última Movimentação Processual', max_length=255)
-    data_ultima_movimentacao = models.DateField('Data Última Movimentação')
-    cpf_relacionado = models.CharField('CPF Relacionado', max_length=14)
-    organizacao = models.ForeignKey('Organizacao', related_name='processos', on_delete=models.SET_NULL, null=True, blank=True)
+    orgao_julgador = models.CharField('Órgão Julgador', max_length=255, null=True, blank=True)
+    ultima_movimentacao = models.CharField('Última Movimentação Processual', max_length=255, null=True, blank=True)
+    data_ultima_movimentacao = models.DateField('Data Última Movimentação', null=True, blank=True)
 
     def __str__(self):
         return f"{self.numero_processo} - {self.orgao_julgador}"

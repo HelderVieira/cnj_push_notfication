@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo, ProcessoMonitorados
-from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm, ProcessoMonitoradosForm
 from django.views.decorators.csrf import csrf_protect
 
 from django import template
@@ -13,24 +13,64 @@ register = template.Library()
 def get_item(dictionary, key):
     return dictionary.get(key)
 
+from django.contrib import messages
+
 @login_required
 def meus_processos_view(request):
     user = request.user
     # Todos os processos vinculados ao CPF do usuário
-    processos_cpf = ProcessoMonitorados.objects.filter(cpf_relacionado=user.cpf)
+    processos_cpf = user.processos_monitorados.all()
     # Organizações que o usuário tem vínculo
     vinculos = Vinculo.objects.filter(usuario=user).select_related('organizacao')
     organizacoes = [v.organizacao for v in vinculos]
     # Dicionário: org_id -> queryset de processos daquela organização
     processos_por_org = {}
     for org in organizacoes:
-        processos_por_org[org.id] = ProcessoMonitorados.objects.filter(organizacao=org)
+        processos_por_org[org.id] = org.processos_monitorados.all()
     context = {
         'processos_cpf': processos_cpf,
         'organizacoes': organizacoes,
         'processos_por_org': processos_por_org,
     }
     return render(request, 'website/meus_processos.html', context)
+
+@login_required
+def adicionar_processo_view(request):
+    user = request.user
+    # Organizações onde o usuário é ADMINISTRADOR
+    vinculos_admin = Vinculo.objects.filter(usuario=user, tipo=Vinculo.TipoVinculo.ADMINISTRADOR).select_related('organizacao')
+    organizacoes_admin = [v.organizacao for v in vinculos_admin]
+    vinculo_choices = [(f'user_{user.id}', 'Meu CPF')]
+    for org in organizacoes_admin:
+        vinculo_choices.append((f'org_{org.id}', org.nome))
+
+    if request.method == 'POST':
+        form = ProcessoMonitoradosForm(request.POST, vinculo_choices=vinculo_choices)
+        if form.is_valid():
+            processo = form.save(commit=False)
+            processo.save()
+            vinculado = form.cleaned_data['vinculado']
+            if vinculado.startswith('user_'):
+                user.processos_monitorados.add(processo)
+                messages.success(request, 'Processo cadastrado vinculado ao seu CPF.')
+            elif vinculado.startswith('org_'):
+                org_id = int(vinculado.split('_')[1])
+                org = next((o for o in organizacoes_admin if o.id == org_id), None)
+                if org:
+                    org.processos_monitorados.add(processo)
+                    messages.success(request, f'Processo cadastrado vinculado à organização "{org.nome}".')
+                else:
+                    messages.error(request, 'Organização inválida.')
+                    processo.delete()
+                    return redirect('adicionar_processo')
+            else:
+                messages.error(request, 'Vínculo inválido.')
+                processo.delete()
+                return redirect('adicionar_processo')
+            return redirect('meus_processos')
+    else:
+        form = ProcessoMonitoradosForm(vinculo_choices=vinculo_choices)
+    return render(request, 'website/adicionar_processo.html', {'form': form})
 
 
 def landing_page_view(request):

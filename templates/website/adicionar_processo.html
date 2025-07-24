@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Adicionar Processo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Cadastro de Processo de Organização</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_numero_processo" class="form-label">Número do Processo</label>
+            {{ form.numero_processo }}
+            {% if form.numero_processo.errors %}<div class="text-danger small">{{ form.numero_processo.errors }}</div>{% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_vinculado" class="form-label">Vinculado</label>
+            {{ form.vinculado }}
+            {% if form.vinculado.errors %}<div class="text-danger small">{{ form.vinculado.errors }}</div>{% endif %}
+        </div>
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="{% url 'meus_processos' %}" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
