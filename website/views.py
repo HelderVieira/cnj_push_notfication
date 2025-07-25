@@ -6,6 +6,8 @@ from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo, Proce
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm, ProcessoMonitoradosForm
 from django.views.decorators.csrf import csrf_protect
 from django.core.paginator import Paginator
+from django.http import Http404
+from core.utils.mongodb_connector import find_process_by_number
 
 from django import template
 register = template.Library()
@@ -259,3 +261,30 @@ def cadastro_organizacao_view(request, pk=None):
         'vinculo_form': vinculo_form,
         'vinculos': vinculos,
     })
+
+
+def formatar_numero_processo(numero_processo):
+    """
+    Recebe um número de processo e retorna apenas os algarísmos numéricos.
+    """
+    return ''.join(filter(str.isdigit, numero_processo))
+
+
+@login_required
+def processo_detail_view(request, numero_processo):
+    """
+    Exibe os detalhes de um processo consultado no MongoDB.
+    """
+    processo_data = find_process_by_number(formatar_numero_processo(numero_processo))
+    if not processo_data:
+        raise Http404("Processo não encontrado no banco de dados.")
+
+    # O _id do MongoDB não é serializável em JSON por padrão, então o removemos se não for necessário
+    if '_id' in processo_data:
+        processo_data['_id'] = str(processo_data['_id'])
+
+    context = {
+        'processo': processo_data,
+        'numero_processo': numero_processo,
+    }
+    return render(request, 'website/processo_detail.html', context)

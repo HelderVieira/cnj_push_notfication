@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load json_filters %}
+
+{% block title %}Detalhes do Processo {{ numero_processo }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Detalhes do Processo {{ numero_processo }}</h1>
+
+    <div class="card">
+        <div class="card-header">
+            Informações do Processo
+        </div>
+        <div class="card-body">
+            {% if processo %}
+                <dl class="row">
+                    {% for key, value in processo.items %}
+                        <dt class="col-sm-3">{{ key }}</dt>
+                        <dd class="col-sm-9">
+                            {% if value|is_list %}
+                                <ul>
+                                {% for item in value %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% elif value|is_dict %}
+                                <dl class="row">
+                                {% for sub_key, sub_value in value.items %}
+                                    <dt class="col-sm-4">{{ sub_key }}</dt>
+                                    <dd class="col-sm-8">{{ sub_value }}</dd>
+                                {% endfor %}
+                                </dl>
+                            {% else %}
+                                {{ value|default:"Não informado" }}
+                            {% endif %}
+                        </dd>
+                    {% endfor %}
+                </dl>
+            {% else %}
+                <p>Nenhum dado encontrado para este processo.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{% url 'meus_processos' %}" class="btn btn-secondary mt-4">Voltar para Meus Processos</a>
+</div>
+
+{# Custom template filters to check type #}
+{% load_json_filters %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Simples script para registrar os filtros, se necessário.
+// Django não tem um is_list ou is_dict por padrão, então vamos criar um templatetag para isso.
+</script>
+{% endblock %}

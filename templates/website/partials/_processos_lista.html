@@ -27,7 +27,9 @@
         <tbody>
             {% for processo in page_obj %}
             <tr>
-                <td>{{ processo.numero_processo }}</td>
+                <td>
+                    <a href="{% url 'processo_detail' processo.numero_processo %}">{{ processo.numero_processo }}</a>
+                </td>
                 <td>{{ processo.orgao_julgador }}</td>
                 <td>
                     {% if active_tab == 'cpf' %}

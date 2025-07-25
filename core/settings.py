@@ -80,6 +80,12 @@ DATABASES = {
     }
 }
 
+# MongoDB Settings
+MONGODB_URI = "mongodb+srv://Administrador:PPGTI_BD_2025@dadoscnj.hopdkl5.mongodb.net/?retryWrites=true&w=majority&appName=DadosCNJ"
+MONGODB_DB_NAME = "processosjuridicos"
+MONGODB_COLLECTION_NAME = "processos"
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
