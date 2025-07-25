@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*237tprc0z8d1lkol@y1*3jvg=$+@b6ft2tct58hjr$7ocxyi4'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -81,9 +82,9 @@ DATABASES = {
 }
 
 # MongoDB Settings
-MONGODB_URI = "mongodb+srv://Administrador:PPGTI_BD_2025@dadoscnj.hopdkl5.mongodb.net/?retryWrites=true&w=majority&appName=DadosCNJ"
-MONGODB_DB_NAME = "processosjuridicos"
-MONGODB_COLLECTION_NAME = "processos"
+MONGODB_URI = config('MONGODB_URI')
+MONGODB_DB_NAME = config('MONGODB_DB_NAME')
+MONGODB_COLLECTION_NAME = config('MONGODB_COLLECTION_NAME')
 
 
 
