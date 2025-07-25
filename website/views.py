@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo, ProcessoMonitorados
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm, ProcessoMonitoradosForm
 from django.views.decorators.csrf import csrf_protect
+from django.core.paginator import Paginator
 
 from django import template
 register = template.Library()
@@ -18,19 +19,52 @@ from django.contrib import messages
 @login_required
 def meus_processos_view(request):
     user = request.user
-    # Todos os processos vinculados ao CPF do usuário
-    processos_cpf = user.processos_monitorados.all()
-    # Organizações que o usuário tem vínculo
+
+    # Tamanho da página, com valor padrão de 10 e validação
+    try:
+        page_size = int(request.GET.get('page_size', 10))
+        if page_size not in [10, 25, 50, 100]:
+            page_size = 10
+    except (ValueError, TypeError):
+        page_size = 10
+
+    # Determina a aba ativa a partir dos parâmetros GET
+    active_tab = request.GET.get('tab', 'cpf')
+    process_list = []
+
+    if active_tab == 'cpf':
+        process_list = user.processos_monitorados.all().order_by('numero_processo')
+    elif active_tab.startswith('org_'):
+        try:
+            org_id = int(active_tab.split('_')[1])
+            if Vinculo.objects.filter(usuario=user, organizacao_id=org_id).exists():
+                org = Organizacao.objects.get(id=org_id)
+                process_list = org.processos_monitorados.all().order_by('numero_processo')
+        except (ValueError, Organizacao.DoesNotExist):
+            process_list = [] # Em caso de erro, retorna lista vazia
+
+    # Paginação
+    paginator = Paginator(process_list, page_size)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Se for uma requisição HTMX, retorna apenas o template parcial
+    if request.headers.get('HX-Request'):
+        return render(request, 'website/partials/_processos_lista.html', {
+            'page_obj': page_obj,
+            'active_tab': active_tab,
+            'page_size': page_size,
+        })
+
+    # Para a carga inicial, busca as organizações e renderiza a página completa
     vinculos = Vinculo.objects.filter(usuario=user).select_related('organizacao')
     organizacoes = [v.organizacao for v in vinculos]
-    # Dicionário: org_id -> queryset de processos daquela organização
-    processos_por_org = {}
-    for org in organizacoes:
-        processos_por_org[org.id] = org.processos_monitorados.all()
+
     context = {
-        'processos_cpf': processos_cpf,
         'organizacoes': organizacoes,
-        'processos_por_org': processos_por_org,
+        'page_obj': page_obj,
+        'active_tab': active_tab,
+        'page_size': page_size,
     }
     return render(request, 'website/meus_processos.html', context)
 

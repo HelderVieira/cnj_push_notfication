@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-end mb-3">
+    <div class="input-group" style="width: 250px;">
+        <label class="input-group-text" for="pageSizeSelect">Itens por página:</label>
+        <select class="form-select" id="pageSizeSelect"
+                name="page_size"
+                hx-get="{% url 'meus_processos' %}?tab={{ active_tab }}"
+                hx-trigger="change"
+                hx-target="#processos-lista"
+                hx-indicator=".htmx-indicator">
+            <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+            <option value="25" {% if page_size == 25 %}selected{% endif %}>25</option>
+            <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+            <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+        </select>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Número do Processo</th>
+                <th>Órgão Julgador</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for processo in page_obj %}
+            <tr>
+                <td>{{ processo.numero_processo }}</td>
+                <td>{{ processo.orgao_julgador }}</td>
+                <td>
+                    {% if active_tab == 'cpf' %}
+                        <a href="{% url 'excluir_processo_monitorado' processo.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                    {% else %}
+                        {% with org_id=active_tab|slice:"4:" %}
+                        <a href="{% url 'excluir_processo_monitorado_org' processo.id org_id %}" class="btn btn-danger btn-sm">Excluir</a>
+                        {% endwith %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-center">Nenhum processo encontrado.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav aria-label="Paginação de processos">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="#"
+                   hx-get="{% url 'meus_processos' %}?tab={{ active_tab }}&page={{ page_obj.previous_page_number }}&page_size={{ page_size }}"
+                   hx-target="#processos-lista"
+                   hx-indicator=".htmx-indicator">Anterior</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+
+        {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ i }}</span></li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="#"
+                       hx-get="{% url 'meus_processos' %}?tab={{ active_tab }}&page={{ i }}&page_size={{ page_size }}"
+                       hx-target="#processos-lista"
+                       hx-indicator=".htmx-indicator">{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="#"
+                   hx-get="{% url 'meus_processos' %}?tab={{ active_tab }}&page={{ page_obj.next_page_number }}&page_size={{ page_size }}"
+                   hx-target="#processos-lista"
+                   hx-indicator=".htmx-indicator">Próxima</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
