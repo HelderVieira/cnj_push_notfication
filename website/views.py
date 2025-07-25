@@ -75,6 +75,60 @@ def meus_processos_view(request):
     return render(request, 'website/meus_processos.html', context)
 
 @login_required
+def notificacoes_view(request):
+    user = request.user
+
+    try:
+        page_size = int(request.GET.get('page_size', 10))
+        if page_size not in [10, 25, 50, 100]:
+            page_size = 10
+    except (ValueError, TypeError):
+        page_size = 10
+
+    active_tab = request.GET.get('tab', 'cpf')
+    notificacoes_list = []
+    processos_numeros = []
+
+    if active_tab == 'cpf':
+        processos_numeros = list(user.processos_monitorados.values_list('numero_processo', flat=True))
+    elif active_tab.startswith('org_'):
+        try:
+            org_id = int(active_tab.split('_')[1])
+            if Vinculo.objects.filter(usuario=user, organizacao_id=org_id).exists():
+                org = Organizacao.objects.get(id=org_id)
+                processos_numeros = list(org.processos_monitorados.values_list('numero_processo', flat=True))
+        except (ValueError, Organizacao.DoesNotExist):
+            processos_numeros = []
+
+    # Buscar notificações no MongoDB
+    notificacoes = []
+    if processos_numeros:
+        try:
+            client = MongoClient(settings.MONGODB_URI)
+            db = client[settings.MONGODB_DB_NAME]
+            notificacoes_collection = db["notificacoes"]
+            notificacoes = list(notificacoes_collection.find({"numero_processo": {"$in": processos_numeros}}).sort("data", -1))
+        except (PyMongoError, Exception) as e:
+            print(f"Erro ao buscar notificações: {e}")
+            notificacoes = []
+
+    paginator = Paginator(notificacoes, page_size)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    vinculos = Vinculo.objects.filter(usuario=user).select_related('organizacao')
+    organizacoes = [v.organizacao for v in vinculos]
+
+    context = {
+        'organizacoes': organizacoes,
+        'page_obj': page_obj,
+        'active_tab': active_tab,
+        'page_size': page_size,
+    }
+    return render(request, 'website/notificacoes.html', context)
+
+
+@login_required
 def adicionar_processo_view(request):
     user = request.user
     # Organizações onde o usuário é ADMINISTRADOR

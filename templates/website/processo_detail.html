@@ -37,14 +37,14 @@
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
                         {% for movimento in movimentacoes reversed %}
-                            <li class="list-group-item">
+                            <li class="list-group-item {% if forloop.counter|divisibleby:2 %} bg-light {% endif %}">
                                 <div class="d-flex w-100 justify-content-between">
                                     <span>{{ movimento.codigo }} - {{ movimento.nome }}
                                         {% if movimento.complementosTabelados %}
                                         - {{ movimento.complementosTabelados.0.descricao }}: <strong>{{ movimento.complementosTabelados.0.nome }}</strong>
                                         {% endif %}
                                     </span>
-                                    <span class="text-muted">{{ movimento.dataHora|date:"d/m/Y H:i" }}</span>
+                                    <span>{{ movimento.dataHora|date:"d/m/Y H:i" }}</span>
                                 </div>
                             </li>
                         {% endfor %}
