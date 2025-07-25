@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from pymongo import MongoClient
+from pymongo.errors import PyMongoError
+from bson import ObjectId
+from django.conf import settings
 from django.contrib import messages
 from .models import ConteudoLandingPage, CustomUser, Organizacao, Vinculo, ProcessoMonitorados
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, OrganizationForm, VinculoForm, ProcessoMonitoradosForm
@@ -270,6 +274,22 @@ def formatar_numero_processo(numero_processo):
     return ''.join(filter(str.isdigit, numero_processo))
 
 
+def get_movimentacoes_by_processo_id(processo_id):
+    """
+    Busca as movimentações de um processo pelo seu ID do MongoDB.
+    """
+    try:
+        client = MongoClient(settings.MONGODB_URI)
+        db = client[settings.MONGODB_DB_NAME]
+        movimentacoes_collection = db["movimentacoes"]
+
+        movimentacoes = list(movimentacoes_collection.find({"processo_id": processo_id}))
+        
+        return movimentacoes
+    except (PyMongoError, Exception) as e:
+        print(f"Erro ao buscar movimentações: {e}")
+        return []
+
 @login_required
 def processo_detail_view(request, numero_processo):
     """
@@ -279,12 +299,17 @@ def processo_detail_view(request, numero_processo):
     if not processo_data:
         raise Http404("Processo não encontrado no banco de dados.")
 
-    # O _id do MongoDB não é serializável em JSON por padrão, então o removemos se não for necessário
     if '_id' in processo_data:
         processo_data['_id'] = str(processo_data['_id'])
+
+    movimentacoes = []
+    if processo_data and '_id' in processo_data:
+        movimentacoes = get_movimentacoes_by_processo_id(processo_data['_id'])
+        print(movimentacoes)
 
     context = {
         'processo': processo_data,
         'numero_processo': numero_processo,
+        'movimentacoes': movimentacoes
     }
     return render(request, 'website/processo_detail.html', context)
