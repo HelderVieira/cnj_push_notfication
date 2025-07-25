@@ -3,27 +3,37 @@
 {% block title %}Adicionar Processo{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Adicionar Processo</h2>
-    <form method="post" novalidate>
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_numero_processo" class="form-label">Número do Processo</label>
-            {{ form.numero_processo }}
-            {% if form.numero_processo.errors %}<div class="text-danger small">{{ form.numero_processo.errors }}</div>{% endif %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Adicionar Processo</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_numero_processo" class="form-label">Número do Processo</label>
+                            {{ form.numero_processo }}
+                            {% if form.numero_processo.errors %}<div class="text-danger small">{{ form.numero_processo.errors }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_orgao_julgador" class="form-label">Órgão Julgador</label>
+                            {{ form.orgao_julgador }}
+                            {% if form.orgao_julgador.errors %}<div class="text-danger small">{{ form.orgao_julgador.errors }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_vinculado" class="form-label">Vinculado</label>
+                            {{ form.vinculado }}
+                            {% if form.vinculado.errors %}<div class="text-danger small">{{ form.vinculado.errors }}</div>{% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-success">Salvar</button>
+                        <a href="{% url 'meus_processos' %}" class="btn btn-secondary ms-2">Cancelar</a>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="id_orgao_julgador" class="form-label">Órgão Julgador</label>
-            {{ form.orgao_julgador }}
-            {% if form.orgao_julgador.errors %}<div class="text-danger small">{{ form.orgao_julgador.errors }}</div>{% endif %}
-        </div>
-        <div class="mb-3">
-            <label for="id_vinculado" class="form-label">Vinculado</label>
-            {{ form.vinculado }}
-            {% if form.vinculado.errors %}<div class="text-danger small">{{ form.vinculado.errors }}</div>{% endif %}
-        </div>
-        <button type="submit" class="btn btn-success">Salvar</button>
-        <a href="{% url 'meus_processos' %}" class="btn btn-secondary ms-2">Cancelar</a>
-    </form>
+    </div>
 </div>
 {% endblock %}

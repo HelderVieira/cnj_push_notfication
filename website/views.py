@@ -305,7 +305,6 @@ def processo_detail_view(request, numero_processo):
     movimentacoes = []
     if processo_data and '_id' in processo_data:
         movimentacoes = get_movimentacoes_by_processo_id(processo_data['_id'])
-        print(movimentacoes)
 
     context = {
         'processo': processo_data,
