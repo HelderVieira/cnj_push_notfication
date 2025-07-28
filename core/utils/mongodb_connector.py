@@ -16,7 +16,7 @@ def get_mongodb_collection(collection_name):
 
 def find_process_by_number(numero_processo):
     """Finds a document in the 'processos' collection by numeroProcesso."""
-    collection = get_mongodb_collection(settings.MONGODB_COLLECTION_NAME)
+    collection = get_mongodb_collection("processos")
     if collection is not None:
         try:
             document = collection.find_one({"numeroProcesso": numero_processo})

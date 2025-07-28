@@ -6,14 +6,14 @@
 {% block content %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Detalhes do Processo</h1>
+        <h1 class="mb-0">Detalhes do Processo {{ processo.numeroProcesso }}</h1>
         <a href="{% url 'meus_processos' %}" class="btn btn-outline-secondary">Voltar para Meus Processos</a>
     </div>
 
     {% if processo %}
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">{{ processo.numeroProcesso|default:numero_processo }}</h5>
+                <h5 class="mb-0">Identificação do Processo</h5>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -31,7 +31,7 @@
 
         {% if movimentacoes %}
             <div class="card shadow-sm">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Últimas Movimentações</h5>
                 </div>
                 <div class="card-body p-0">

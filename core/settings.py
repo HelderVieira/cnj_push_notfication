@@ -84,8 +84,6 @@ DATABASES = {
 # MongoDB Settings
 MONGODB_URI = config('MONGODB_URI')
 MONGODB_DB_NAME = config('MONGODB_DB_NAME')
-MONGODB_COLLECTION_NAME = config('MONGODB_COLLECTION_NAME')
-
 
 
 # Password validation
