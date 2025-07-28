@@ -4,5 +4,36 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4">Notificações <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></h2>
+    <ul class="nav nav-tabs" id="notificacoesTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'cpf' %}active{% endif %}" id="cpf-tab"
+                    data-bs-toggle="tab" data-bs-target="#notificacoes-lista"
+                    type="button" role="tab" aria-controls="notificacoes-lista" aria-selected="{% if active_tab == 'cpf' %}true{% else %}false{% endif %}"
+                    hx-get="{% url 'notificacoes' %}?tab=cpf"
+                    hx-target="#notificacoes-lista"
+                    hx-push-url="true"
+                    hx-indicator=".htmx-indicator">
+                Meus Processos (CPF)
+            </button>
+        </li>
+        {% for org in organizacoes %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'org_'|add:org.id|stringformat:"s" %}active{% endif %}" id="org-{{ org.id }}-tab"
+                    data-bs-toggle="tab" data-bs-target="#notificacoes-lista"
+                    type="button" role="tab" aria-controls="notificacoes-lista" aria-selected="{% if active_tab == 'org_'|add:org.id|stringformat:"s" %}true{% else %}false{% endif %}"
+                    hx-get="{% url 'notificacoes' %}?tab=org_{{ org.id }}"
+                    hx-target="#notificacoes-lista"
+                    hx-push-url="true"
+                    hx-indicator=".htmx-indicator">
+                {{ org.nome }}
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content mt-3" id="notificacoesTabsContent">
+        <div class="tab-pane fade show active" id="notificacoes-lista" role="tabpanel" aria-labelledby="active-tab">
+            {% include 'website/partials/_notificacoes_lista.html' %}
+        </div>
+    </div>
 </div>
 {% endblock %}

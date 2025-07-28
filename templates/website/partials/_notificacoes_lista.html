@@ -1,0 +1,22 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Número do Processo</th>
+            <th>Órgão Julgador</th>
+            <th>Última Movimentação</th>
+            <th>Data da Última Movimentação</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for processo, movimentacao in processos_com_movimentacoes.items %}
+        <tr>
+            <td><a href="{% url 'processo_detail' processo.numero_processo %}">{{ processo.numero_processo }}</a></td>
+            <td>{{ processo.orgao_julgador }}</td>
+            <td>{% if movimentacao %}{{ movimentacao.nome }}{% else %}<span class="text-muted">Sem movimentações</span>{% endif %}</td>
+            <td>{% if movimentacao %}{{ movimentacao.dataHora|date:'d/m/Y H:i' }}{% else %}-{% endif %}</td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4" class="text-center">Nenhum processo monitorado nesta aba.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>

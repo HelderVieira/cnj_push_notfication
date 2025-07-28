@@ -22,6 +22,14 @@ def get_item(dictionary, key):
 
 from django.contrib import messages
 
+
+def formatar_numero_processo(numero_processo):
+    """
+    Recebe um número de processo e retorna apenas os algarísmos numéricos.
+    """
+    return ''.join(filter(str.isdigit, numero_processo))
+
+
 @login_required
 def meus_processos_view(request):
     user = request.user
@@ -78,9 +86,62 @@ def meus_processos_view(request):
 def notificacoes_view(request):
     user = request.user
 
+    # Determina a aba ativa
+    active_tab = request.GET.get('tab', 'cpf')
+    processos = []
+
+    if active_tab == 'cpf':
+        processos = user.processos_monitorados.all().order_by('numero_processo')
+    elif active_tab.startswith('org_'):
+        try:
+            org_id = int(active_tab.split('_')[1])
+            if Vinculo.objects.filter(usuario=user, organizacao_id=org_id).exists():
+                org = Organizacao.objects.get(id=org_id)
+                processos = org.processos_monitorados.all().order_by('numero_processo')
+        except (ValueError, Organizacao.DoesNotExist):
+            processos = []
+
+    # Monta dicionário processo -> última movimentação
+    from pymongo import MongoClient
+    from django.conf import settings
+    from pymongo.errors import PyMongoError
+    processos_com_movimentacoes = {}
+    try:
+        client = MongoClient(settings.MONGODB_URI)
+        db = client[settings.MONGODB_DB_NAME]
+        processos_collection = db["processos"]
+        movimentacoes_collection = db["movimentacoes"]
+        for processo in processos:
+            # Busca o _id do processo pelo numero_processo
+            proc_doc = processos_collection.find_one({"numeroProcesso": formatar_numero_processo(processo.numero_processo)})
+            if proc_doc:
+                proc_id = proc_doc.get("_id")
+                movimentacoes = list(movimentacoes_collection.find({"processo_id": proc_id}))
+                if movimentacoes:
+                    latest_mov = max(movimentacoes, key=lambda x: x["dataHora"])
+                    processos_com_movimentacoes[processo] = latest_mov
+                else:
+                    processos_com_movimentacoes[processo] = None
+            else:
+                processos_com_movimentacoes[processo] = None
+    except (PyMongoError, Exception) as e:
+        print(f"Erro ao buscar movimentações: {e}")
+        for processo in processos:
+            processos_com_movimentacoes[processo] = None
+
+    # Busca organizações para montar abas
+    vinculos = Vinculo.objects.filter(usuario=user).select_related('organizacao')
+    organizacoes = [v.organizacao for v in vinculos]
+
     context = {
+        'organizacoes': organizacoes,
+        'active_tab': active_tab,
+        'processos_com_movimentacoes': processos_com_movimentacoes,
     }
+    if request.headers.get('HX-Request'):
+        return render(request, 'website/partials/_notificacoes_lista.html', context)
     return render(request, 'website/notificacoes.html', context)
+
 
 
 @login_required
@@ -274,13 +335,6 @@ def cadastro_organizacao_view(request, pk=None):
         'vinculo_form': vinculo_form,
         'vinculos': vinculos,
     })
-
-
-def formatar_numero_processo(numero_processo):
-    """
-    Recebe um número de processo e retorna apenas os algarísmos numéricos.
-    """
-    return ''.join(filter(str.isdigit, numero_processo))
 
 
 def get_movimentacoes_by_processo_id(processo_id):
