@@ -4,45 +4,5 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4">Notificações <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></h2>
-    <ul class="nav nav-tabs mb-3" id="notificacoesTabs">
-        <li class="nav-item">
-            <a class="nav-link {% if active_tab == 'cpf' %}active{% endif %}" href="?tab=cpf">Meu CPF</a>
-        </li>
-        {% for org in organizacoes %}
-            <li class="nav-item">
-                <a class="nav-link {% if active_tab == 'org_'|add:org.id|stringformat:'s' %}active{% endif %}" href="?tab=org_{{ org.id }}">{{ org.nome }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-    {% if page_obj.object_list %}
-        <div class="list-group mb-3">
-            {% for notificacao in page_obj.object_list %}
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <span><strong>{{ notificacao.numero_processo }}</strong> - {{ notificacao.titulo|default:'Notificação' }}</span>
-                        <span>{{ notificacao.data|date:"d/m/Y H:i" }}</span>
-                    </div>
-                    <div>{{ notificacao.mensagem|default:notificacao.descricao }}</div>
-                </div>
-            {% endfor %}
-        </div>
-        <nav aria-label="Paginação">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?tab={{ active_tab }}&page={{ page_obj.previous_page_number }}">Anterior</a></li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
-                {% endif %}
-                <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
-                {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link" href="?tab={{ active_tab }}&page={{ page_obj.next_page_number }}">Próxima</a></li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">Próxima</span></li>
-                {% endif %}
-            </ul>
-        </nav>
-    {% else %}
-        <div class="alert alert-info">Nenhuma notificação encontrada para esta aba.</div>
-    {% endif %}
 </div>
 {% endblock %}
