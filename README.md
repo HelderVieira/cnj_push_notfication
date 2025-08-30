@@ -14,6 +14,8 @@ O banco de dados foi construído com [MongoDB](https://www.mongodb.com/), uma ba
 
 ## Rodando o projeto
 
+### Aplicação WEB
+
 Para rodar o projeto, é necessário ter o [Python](https://www.python.org/) instalado na máquina.
 
 Após clonar o repositório, recomendamos a criação de um ambiente virtual para o projeto, para que as dependências não interfiram com as do sistema.
@@ -44,6 +46,10 @@ Após isso, é possível iniciar o servidor de desenvolvimento.
 ```bash
 python manage.py runserver
 ```
+
+### MongoDB
+
+A parte mais importante do projeto executa no MONGODB. Todos os scripts resoetivos encontram-se na pasta bd_mobgo.
 
 ## Equipe
 
